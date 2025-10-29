@@ -4,9 +4,11 @@ Converts text responses to natural speech using Adam's voice
 """
 
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play
 from typing import Optional
 import io
+import subprocess
+import tempfile
+import os
 
 
 class TTSProcessor:
@@ -50,15 +52,29 @@ class TTSProcessor:
             print(f"🔊 Speaking: {text[:50]}{'...' if len(text) > 50 else ''}")
 
             # Generate audio using ElevenLabs
-            audio = self.client.text_to_speech.convert(
+            audio_generator = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=self.voice_id,
                 model_id=self.model,
                 output_format=self.output_format
             )
 
-            # Play audio directly
-            play(audio)
+            # Save audio to temporary file and play
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_audio:
+                # Write all audio chunks to file
+                for chunk in audio_generator:
+                    if chunk:
+                        temp_audio.write(chunk)
+                temp_audio_path = temp_audio.name
+
+            # Play audio using system player
+            self._play_audio_file(temp_audio_path)
+
+            # Clean up temp file
+            try:
+                os.unlink(temp_audio_path)
+            except:
+                pass
 
             print("✅ Speech completed")
             return True
@@ -67,9 +83,27 @@ class TTSProcessor:
             print(f"❌ TTS error: {e}")
             return False
 
+    def _play_audio_file(self, file_path: str):
+        """Play audio file using system player"""
+        import platform
+        system = platform.system()
+
+        try:
+            if system == "Darwin":  # macOS
+                subprocess.run(["afplay", file_path], check=True)
+            elif system == "Linux":
+                subprocess.run(["aplay", file_path], check=True)
+            elif system == "Windows":
+                subprocess.run(["powershell", "-c", f"(New-Object Media.SoundPlayer '{file_path}').PlaySync()"], check=True)
+            else:
+                print(f"⚠️  Unsupported platform: {system}")
+        except Exception as e:
+            print(f"⚠️  Could not play audio: {e}")
+
     def speak_stream(self, text: str) -> bool:
         """
         Convert text to speech with streaming (lower latency)
+        Note: Falls back to regular speak method
 
         Args:
             text: Text to convert to speech
@@ -77,32 +111,9 @@ class TTSProcessor:
         Returns:
             True if successful, False otherwise
         """
-        if not text or not text.strip():
-            print("⚠️  No text to speak")
-            return False
-
-        try:
-            print(f"🔊 Speaking (streaming): {text[:50]}{'...' if len(text) > 50 else ''}")
-
-            # Stream audio for faster playback
-            audio_stream = self.client.text_to_speech.convert_as_stream(
-                text=text,
-                voice_id=self.voice_id,
-                model_id=self.model,
-                output_format=self.output_format
-            )
-
-            # Play streamed audio
-            play(audio_stream)
-
-            print("✅ Speech completed")
-            return True
-
-        except Exception as e:
-            print(f"❌ TTS streaming error: {e}")
-            # Fallback to regular speak
-            print("🔄 Falling back to regular speak method...")
-            return self.speak(text)
+        # For now, just use regular speak method
+        # Streaming audio playback is more complex
+        return self.speak(text)
 
     def set_voice(self, voice_id: str, voice_name: str = "Custom"):
         """
