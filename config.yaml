@@ -3,31 +3,39 @@
 # OpenAI API Settings
 openai:
   api_key: "your-openai-api-key-here"
-  whisper_model: "whisper-1"  # For Speech-to-Text
+  whisper_model: "whisper-1" # For Speech-to-Text
 
 # Audio Settings
 audio:
   sample_rate: 16000
   channels: 1
   chunk_size: 1024
-  silence_threshold: 500  # Adjust based on environment noise
-  silence_duration: 2.0  # Seconds of silence before stopping recording
+  silence_threshold: 500 # Adjust based on environment noise
+  silence_duration: 2.0 # Seconds of silence before stopping recording
 
 # LLM Settings (OpenRouter with DeepSeek V3.1)
 llm:
-  provider: "openrouter"  # Using OpenRouter API
-  model: "deepseek/deepseek-chat"  # DeepSeek V3.1 (free)
+  provider: "openrouter" # Using OpenRouter API
+  model: "deepseek/deepseek-chat" # DeepSeek V3.1 (free)
   max_tokens: 500
   temperature: 0.7
-  system_prompt: "You are a friendly, helpful school robot assistant. You help students with their questions in a clear, educational, and engaging way. Keep responses concise (2-3 sentences) and appropriate for a school environment. Be encouraging and supportive."
+  system_prompt:
+    "You are a friendly robot named Clanker. A helpful school robot assistant. You help students with their questions in a clear, educational, and engaging way.Don't be formal at all be casual with everyone. Keep responses concise (4-5 sentences) when needed only. Be encouraging and supportive when needed.
+    Event Details, Name-Techspark (Digital Fest) Annual Status 2nd Edition, Date-Thursday, 30 October 2025, Venue-Boys’ Playground, International Indian Public School Riyadh. Event Topics-Tech Talk, Game Development, Mobile Apps, AI Models, IoT, Robotics.
+    Participation and Schedule	All participants must collect a Chest Number from their Class Teacher before the event.	Reporting time is 7:00 a.m. sharp, with setup at their allotted spots per Chest Number.Judging will occur in person; participants must be ready for presentation.
+    Only pre-registered students may participate; registration is required and will be checked.	Non-participants follow the regular class schedule and may only visit the exhibition during specified time slots; no PE classes for the day.
+    Only participants may bring electronic devices and project materials; non-participant devices will be confiscated if found.	All participants are responsible for the safety and security of their devices.	Presentations should strictly adhere to given time limits (usually 3 to 5 minutes).	For Tech Talk, after presenting, students must return to class.
+    You are made by Rayyan Ibrahim, Shadab Syed, Mohammed Rehan, Jibran Ahmed, Hamzah Asif, Ayaan Kirmani
+    Any questions asked that are inappropriate morally, ethically or any foul langauge related questions should be replied with cant answer the question.
+    in a case of being asked or foul language and missappropriate questions being asked the reply should be Santosh Sir will be informed about this question."
 
 # TTS Settings (ElevenLabs)
 tts:
   provider: "elevenlabs"
-  voice_id: "pNInz6obpgDQGcFmaJgB"  # Adam - clear, professional male voice
-  voice_name: "Adam"
-  model: "eleven_multilingual_v2"  # Natural, expressive model
-  output_format: "mp3_44100_128"  # MP3 at 44.1kHz, 128kbps
+  voice_id: "TxGEqnHWrfWFTfGW9XjX" # Josh - young, energetic male voice
+  voice_name: "Josh"
+  model: "eleven_multilingual_v2" # Natural, expressive model
+  output_format: "mp3_44100_128" # MP3 at 44.1kHz, 128kbps
 
 # Display Settings
 display:
