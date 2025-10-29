@@ -1,0 +1,37 @@
+# Robot Configuration File
+
+# OpenAI API Settings
+openai:
+  api_key: "your-openai-api-key-here"
+  whisper_model: "whisper-1"  # For Speech-to-Text
+
+# Audio Settings
+audio:
+  sample_rate: 16000
+  channels: 1
+  chunk_size: 1024
+  silence_threshold: 500  # Adjust based on environment noise
+  silence_duration: 2.0  # Seconds of silence before stopping recording
+
+# LLM Settings (OpenRouter with DeepSeek V3.1)
+llm:
+  provider: "openrouter"  # Using OpenRouter API
+  model: "deepseek/deepseek-chat"  # DeepSeek V3.1 (free)
+  max_tokens: 500
+  temperature: 0.7
+  system_prompt: "You are a friendly, helpful school robot assistant. You help students with their questions in a clear, educational, and engaging way. Keep responses concise (2-3 sentences) and appropriate for a school environment. Be encouraging and supportive."
+
+# TTS Settings (ElevenLabs)
+tts:
+  provider: "elevenlabs"
+  voice_id: "pNInz6obpgDQGcFmaJgB"  # Adam - clear, professional male voice
+  voice_name: "Adam"
+  model: "eleven_multilingual_v2"  # Natural, expressive model
+  output_format: "mp3_44100_128"  # MP3 at 44.1kHz, 128kbps
+
+# Display Settings
+display:
+  window_title: "School Robot Assistant"
+  width: 800
+  height: 600
+  fullscreen: false

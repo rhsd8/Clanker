@@ -1,0 +1,24 @@
+# Core dependencies
+openai>=1.0.0
+python-dotenv>=1.0.0
+PyYAML>=6.0
+requests>=2.31.0
+
+# Audio processing
+# pyaudio>=0.2.13  # Optional - can be tricky on macOS, using sounddevice instead
+sounddevice>=0.4.6
+soundfile>=0.12.1
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Speech Recognition
+SpeechRecognition>=3.10.0
+
+# Text-to-Speech
+elevenlabs>=2.21.0
+
+# Future dependencies (uncomment when needed)
+# anthropic>=0.18.0  # For Claude API
+# gTTS>=2.3.0  # For Google TTS
+# pyttsx3>=2.90  # For offline TTS
+# tkinter  # Usually comes with Python
