@@ -17,6 +17,11 @@ SpeechRecognition>=3.10.0
 # Text-to-Speech
 elevenlabs>=2.21.0
 
+# WebSocket Server for UI
+fastapi>=0.115.0
+uvicorn>=0.32.0
+websockets>=14.0
+
 # Future dependencies (uncomment when needed)
 # anthropic>=0.18.0  # For Claude API
 # gTTS>=2.3.0  # For Google TTS

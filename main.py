@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from modules.stt_sounddevice import WhisperSTT
 from modules.llm import LLMProcessor
 from modules.tts import TTSProcessor
+from server.state_broadcaster import StateBroadcaster
 
 
 def load_config(config_path: str = "config.yaml") -> dict:
@@ -71,10 +72,16 @@ def main():
         output_format=config["tts"]["output_format"]
     )
 
+    # Initialize State Broadcaster for UI
+    broadcaster = StateBroadcaster()
+
     try:
         print("\n✅ Robot is ready!")
         print("💡 Recording mode: Press ENTER to START, then ENTER again to STOP")
         print("   Press Ctrl+C to exit\n")
+
+        # Set initial state
+        broadcaster.idle("Ready for students")
 
         # Main conversation loop
         while True:
@@ -83,26 +90,37 @@ def main():
             input("⏸️  Press ENTER to start listening for next student... ")
 
             # Step 1: Listen to student's question (press Enter to stop)
-            student_input = stt.manual_listen_and_transcribe()
+            broadcaster.listening("Recording audio...")
+
+            # When recording stops, immediately switch to thinking mode
+            student_input = stt.manual_listen_and_transcribe(
+                on_stop_callback=lambda: broadcaster.thinking("Transcribing audio...")
+            )
 
             if not student_input:
                 print("⚠️  Could not understand. Please try again.")
+                broadcaster.idle("Ready - try again")
                 continue
 
             # Step 2: Send to LLM for processing
+            broadcaster.thinking(f"Processing: {student_input[:50]}...")
             robot_response = llm.generate_response(student_input)
 
             if not robot_response:
                 print("⚠️  Could not generate response. Please try again.")
+                broadcaster.idle("Ready - try again")
                 continue
 
             # Step 3: Convert response to speech
+            broadcaster.speaking(robot_response)
             tts.speak(robot_response)
 
             print("\n✅ Interaction complete! Ready for next student.")
+            broadcaster.idle("Ready for next student")
 
     except KeyboardInterrupt:
         print("\n\n🛑 Shutting down robot...")
+        broadcaster.idle("Shutting down...")
     finally:
         stt.cleanup()
         print("👋 Goodbye!")

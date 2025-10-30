@@ -44,12 +44,13 @@ class WhisperSTT:
         self.recording_frames = []
         self.audio_queue = queue.Queue()
 
-    def record_audio(self, max_duration: int = 30) -> bytes:
+    def record_audio(self, max_duration: int = 30, on_stop_callback=None) -> bytes:
         """
         Record audio from microphone until silence is detected
 
         Args:
             max_duration: Maximum recording duration in seconds
+            on_stop_callback: Optional callback to call when recording stops
 
         Returns:
             Audio data as bytes (WAV format)
@@ -95,6 +96,9 @@ class WhisperSTT:
                     # Stop if silence detected after speaking
                     if started_speaking and silence_chunks > silence_chunks_threshold:
                         print("🔇 Silence detected, processing...")
+                        # Call callback before returning
+                        if on_stop_callback:
+                            on_stop_callback()
                         break
 
         if not frames:
@@ -215,11 +219,15 @@ class WhisperSTT:
 
         return self._frames_to_wav(audio_data)
 
-    def manual_listen_and_transcribe(self) -> Optional[str]:
+    def manual_listen_and_transcribe(self, on_stop_callback=None) -> Optional[str]:
         """
         Manual recording with start/stop control
 
         User presses Enter to stop recording
+
+        Args:
+            on_stop_callback: Optional callback function to call when recording stops
+                             (before transcription starts)
 
         Returns:
             Transcribed text or None if error
@@ -238,6 +246,10 @@ class WhisperSTT:
             return None
 
         audio_data = self.stop_recording()
+
+        # Call the callback immediately after stopping (before transcription)
+        if on_stop_callback:
+            on_stop_callback()
 
         if audio_data:
             return self.transcribe(audio_data)
